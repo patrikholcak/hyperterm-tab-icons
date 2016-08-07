@@ -6,7 +6,7 @@ const NAME = require('./package.json').name;
 // Register at least 1 service... Won't load without this.
 exports.decorateConfig = config => config;
 
-let activeStyle = { transition: 'opacity 200ms ease-in' };
+let activeStyle = { color: 'rgba(255, 255, 255, .5)' };
 let inactiveStyle = { color: '#fff', opacity: 0.3 };
 let mapIcons = {};
 let mapColors = {};
@@ -42,7 +42,8 @@ const loadIcons = () => {
 
 const getIcon = title => {
   loadIcons();
-  const results = filter(classes, title.split(' ')[0], { maxResults: 1 });
+  const parsedTitle = title.match(/.*\W(\w+)\s*\)/) || [];
+  const results = filter(classes, parsedTitle[parsedTitle.length - 1], { maxResults: 1 });
   const match = results.length === 0 ? 'shell' : results[0];
   return { class: icons[match], name: match };
 };
@@ -56,13 +57,7 @@ const getCustomTitle = (title, active) => {
       'i',
       {
         className: `${icons.ti} ${icon.class}`,
-        style: active ?
-          Object.assign(
-            {},
-            activeStyle,
-            mapColors[icon.name] ? { color: mapColors[icon.name] } : {}
-          ) :
-          inactiveStyle,
+        style: active ? activeStyle :inactiveStyle,
       }
     ),
     React.createElement(
